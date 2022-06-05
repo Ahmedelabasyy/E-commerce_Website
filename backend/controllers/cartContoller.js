@@ -17,7 +17,7 @@ const createCart = asyncHandler(async (id) => {
 // @route   GET /api/cart/
 // @access  private
 const getCartItems = asyncHandler(async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.params.id;
   const cart = await Cart.findOne({ userId });
   if (!cart) {
     createCart(userId);
@@ -29,7 +29,7 @@ const getCartItems = asyncHandler(async (req, res) => {
 // @route   PUT /api/cart/add
 // @access  private
 const addItemToCart = asyncHandler(async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.params.id;
   const { productId, quantity } = req.body;
 
   const product = await Product.findById(productId);
@@ -74,7 +74,7 @@ const addItemToCart = asyncHandler(async (req, res) => {
 // @route   PUT /api/cart/remove
 // @access  private
 const removeItemFromCart = asyncHandler(async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.params.id;
   const { productId } = req.body;
   let cart = await Cart.findOne({ userId });
   if (!cart) {
