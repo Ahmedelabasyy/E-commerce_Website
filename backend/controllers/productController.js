@@ -11,6 +11,10 @@ const ProductM = require("../model/productMModel");
 const Category = require("../model/categoryModel");
 const Brand = require("../model/brandModel");
 const catController = require("../controllers/categoryController");
+
+const User = require("../model/userModel");
+const MailService = require("../utilities/mailServices");
+const mailService = new MailService();
 /**
  * @desc    GET all Products
  * @route   GET /api/products/
@@ -67,7 +71,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
  * @access  Private Admin
  */
 const createProduct = asyncHandler(async (req, res) => {
-  const product = req.body;
+  let product = req.body;
 
   product = await Product.create({
     name: product.name,
@@ -78,9 +82,33 @@ const createProduct = asyncHandler(async (req, res) => {
     brand: product.brand,
     quantityInStock: product.quantityInStock,
   });
+  User.find({}, function(err, allUsers){
+    if(err){
+        console.log(err);
+    }
+    let mailList = [];
+    allUsers.forEach(function(users){
+        mailList.push(users.email);
+        return mailList;
+    });
+    const productMailed = {
+      name: product.name,
+      description: product.description,
+      image: product.images,
+      price: product.price
+    };
+
+    let mailInfo = {
+            to: mailList,
+            subject: " Our latest arrivals",
+            template: "productArrivals",
+            context: productMailed,
+        };
+      mailService.sendMail(mailInfo);
+});
   res.json({
     code: res.statusCode,
-    message: "Product created",
+    message: "Product created and an email has been sent to all users",
     product,
   });
 });

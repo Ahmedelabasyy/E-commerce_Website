@@ -4,8 +4,6 @@ const dotenv = require("dotenv").config();
 const { errorHandler } = require("./middleware/errorMiddleware");
 const port = process.env.PORT || 3000;
 const connectDB = require("./config/db");
-const nodemailer = require('nodemailer');
-const hbs = require("nodemailer-express-handlebars");
 
 connectDB();
 
